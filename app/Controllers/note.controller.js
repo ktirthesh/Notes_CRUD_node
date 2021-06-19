@@ -11,9 +11,10 @@ exports.create = (req, res) => {
 
     // Create a Note
     const note = new Note({
-        title: req.body.title || "Untitled Note", 
-        content: req.body.content
-    });
+      title: req.body.title || "Untitled Note",
+      content: req.body.content,
+      auther: req.body.auther || "NO AUTHER",
+    })
 
     // Save Note in the database
     note.save()
@@ -73,27 +74,33 @@ exports.update = (req, res) => {
     }
 
     // Find note and update it with the request body
-    Note.findByIdAndUpdate(req.params.noteId, {
+    Note.findByIdAndUpdate(
+      req.params.noteId,
+      {
         title: req.body.title || "Untitled Note",
-        content: req.body.content
-    }, {new: true})
-    .then(note => {
-        if(!note) {
-            return res.status(404).send({
-                message: "Note not found with id " + req.params.noteId
-            });
+        content: req.body.content,
+        auther: req.body.auther || "NO AUTHER",
+      },
+      { new: true }
+    )
+      .then((note) => {
+        if (!note) {
+          return res.status(404).send({
+            message: "Note not found with id " + req.params.noteId,
+          })
         }
-        res.send(note);
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "Note not found with id " + req.params.noteId
-            });                
+        res.send(note)
+      })
+      .catch((err) => {
+        if (err.kind === "ObjectId") {
+          return res.status(404).send({
+            message: "Note not found with id " + req.params.noteId,
+          })
         }
         return res.status(500).send({
-            message: "Error updating note with id " + req.params.noteId
-        });
-    });
+          message: "Error updating note with id " + req.params.noteId,
+        })
+      })
 
 };
 
